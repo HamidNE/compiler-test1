@@ -387,14 +387,7 @@ void assign_only(int id) {
 }
 
 void switch_expr() {
-	if(is_first) {
-		printf("MOV RS,R%d\n",--next_reg);
-	} else {
-		if(after_hp)
-			printf("MOV RS,R4\n");
-		else
-			printf("MOV RS,R0\n");
-	}
+	next_reg--;
 }
 
 void declare_const(int id, int _type)
@@ -406,14 +399,8 @@ void declare_const(int id, int _type)
 		variable_initialized[id] = 1;
 		is_constant[id] = 1;
 
-		if(is_first) {
-			printf("MOV %c,R%d\n",id+'a',--next_reg);
-		} else {
-			if(after_hp)
-				printf("MOV %c,R4\n",id+'a');
-			else
-				printf("MOV %c,R0\n",id+'a');
-		}
+		if(is_first)
+			next_reg--;
 	} else {
 		printf("Syntax Error : %c is an already declared variable\n", id + 'a');
 	}
@@ -428,12 +415,6 @@ void declare_initalize(int id, int _type) {
 		is_constant[id] = 0;
 		if(is_first)
 			next_reg--;
-		else {
-			if(after_hp)
-				printf("MOV %c,R4\n",id+'a');
-			else
-				printf("MOV %c,R0\n",id+'a');
-		}
 	} else {
 		printf("Syntax Error : %c is an already declared variable\n", id + 'a');
 	}
