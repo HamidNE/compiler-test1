@@ -47,15 +47,15 @@ int type[26];
 	int 	INTGR;
 	char 	CHR;
 	char 	*STRNG;
-	float 	FLT;
+	double 	DBL;
 }
 
 %start statement
 %token IF ELSE ELSEIF FOR WHILE SWITCH CASE DO BREAK DEFAULT
-%token TYPE_INT TYPE_FLT TYPE_STR TYPE_CHR TYPE_CONST show_symbol_table
+%token TYPE_INT TYPE_DBL TYPE_STR TYPE_CHR TYPE_CONST show_symbol_table
 %token <INTGR> ID
 %token <INTGR> NUM
-%token <FLT> FLOATING_NUM
+%token <DBL> DOUBLE_NUM
 %token <CHR> CHAR_VALUE
 %token <STRNG> STRING_VALUE
 %token exit_command
@@ -199,7 +199,7 @@ high_priority_expr:
 
 math_element:
 	  NUM			  			{ $$=$1; next_reg++;}
-	| FLOATING_NUM				{ $$=$1; next_reg++; }
+	| DOUBLE_NUM				{ $$=$1; next_reg++; }
 	| ID 	{	$$=$1;
 				if(declared[$1] == 1) {
 					if(variable_initialized[$1] == 1) {
@@ -221,10 +221,10 @@ assign_statement:
 
 variable_declaration_statement:
 	  TYPE_INT ID 					{ declare_only($2,1); }
-	| TYPE_FLT ID					{ declare_only($2,2); }
+	| TYPE_DBL ID					{ declare_only($2,2); }
 	| TYPE_CHR ID					{ declare_only($2,3); }
 	| TYPE_INT ID '=' math_expr		{ declare_initalize($2,1); }
-	| TYPE_FLT ID '=' math_expr		{ declare_initalize($2,2); }
+	| TYPE_DBL ID '=' math_expr		{ declare_initalize($2,2); }
 	| TYPE_CHR ID '=' CHAR_VALUE	{ 	if(declared[$2] == 0) {
 											declared[$2] = 1;
 											type[$2] = 3;
@@ -235,7 +235,7 @@ variable_declaration_statement:
 										else 
 											printf("Syntax Error : %c is an already declared variable\n", $2 + 'a');
 									}
-	| TYPE_CHR ID '=' FLOATING_NUM { printf("Syntax Error : char can not be assigned a floating number\n");}
+	| TYPE_CHR ID '=' DOUBLE_NUM { printf("Syntax Error : char can not be assigned a floating number\n");}
 	;
 
 open_brace:
@@ -249,7 +249,7 @@ close_brace:
 //TODO edit to match normal declaration registers
 constant_declaration_statement:
 	  TYPE_CONST TYPE_INT ID '=' math_expr		{ declare_const($3,1); }
-	| TYPE_CONST TYPE_FLT ID '=' math_expr		{ declare_const($3,2); }
+	| TYPE_CONST TYPE_DBL ID '=' math_expr		{ declare_const($3,2); }
 	| TYPE_CONST TYPE_CHR ID '=' CHAR_VALUE		{
 													if(declared[$3] == 0) {
 														declared[$3] = 1;
