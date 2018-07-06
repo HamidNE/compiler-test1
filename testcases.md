@@ -1,4 +1,4 @@
-# :poop: :poop: Test Cases & their respective Outputs :poop: :poop:
+# Test Cases & their respective Outputs
 ## Math Expressions
 ```c
 int v = 7 + 4 + 2 + 5 + 2 * 2;
