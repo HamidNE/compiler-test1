@@ -47,7 +47,7 @@ int type[26];
 	int 	INTGR;
 	char 	CHR;
 	char 	*STRNG;
-	double 	FLT;
+	float 	FLT;
 }
 
 %start statement
@@ -197,7 +197,6 @@ high_priority_expr:
 	| math_element								{ $$=$1; }
 	;
 
-//TODO: ID type check
 math_element:
 	  NUM			  			{ $$=$1; printf("NUM"); next_reg++;}
 	| FLOATING_NUM				{ $$=$1; printf("FLOATING_NUM"); next_reg++; }
@@ -437,14 +436,14 @@ void declare_initalize(int id, int _type) {
 		scope[id] = cscope;
 		variable_initialized[id] = 1;
 		is_constant[id] = 0;
-		if(is_first) {
-			printf("MOV %c,R%d\n",id+'a',--next_reg);
-		}else{
+		if(is_first)
+			next_reg--;
+		else {
 			if(after_hp)
 				printf("MOV %c,R4\n",id+'a');
 			else
 				printf("MOV %c,R0\n",id+'a');
-			}
+		}
 	} else {
 		printf("Syntax Error : %c is an already declared variable\n", id + 'a');
 	}

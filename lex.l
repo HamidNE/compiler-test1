@@ -45,9 +45,9 @@ ALNUM [0-9a-zA-Z]
 
 
 "int"			return TYPE_INT;
+"char"			return TYPE_CHR;
 "double"		return TYPE_FLT;
 "string"  		return TYPE_STR;
-"char"			return TYPE_CHR;
 "const"   		return TYPE_CONST;
 "exit"			return exit_command;
 "symbol_table" 	return show_symbol_table;
@@ -57,7 +57,7 @@ ALNUM [0-9a-zA-Z]
 \-?{DIGIT}*"."{DIGIT}+      { yylval.FLT   = atof(yytext); return FLOATING_NUM;}
 \-?{DIGIT}+				 	{ yylval.INTGR = atoi(yytext); return NUM;}
 \'.\'						{ yylval.INTGR = yytext[1]-'a'; return(CHAR_VALUE); }
-{ALPHA}						{ yylval.INTGR = *yytext-'a'; return(ID);}
+{ALPHA}						{ yylval.INTGR = *yytext-'a'; 	return(ID); }
 
 \"[0-9a-zA-Z ]+\" 			{ yylval.STRNG = yytext; return(STRING_VALUE); }
 
