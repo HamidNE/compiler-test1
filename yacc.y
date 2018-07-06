@@ -103,8 +103,8 @@ switch_statement:
 	;
 
 switch_body:
-	  open_brace cases 			{ int tmp = exit_scope(); printf("label%d%c:\nlabel%d:\n",tmp,'a'-1+next_case,tmp); } close_brace
-	| open_brace cases default  { int tmp = exit_scope(); printf("label%d%c:\nlabel%d:\n",tmp,'a'-1+next_case,tmp); } close_brace
+	  open_brace cases 			{ int tmp = exit_scope(); } close_brace
+	| open_brace cases default  { int tmp = exit_scope(); } close_brace
 
 cases:
 	  CASE { if (next_case > 0) printf("label%d%c:\n",nesting_arr[nesting_last_index],'a'-1+next_case); next_case++; } math_expr { switch_test(); } ':' statement case_break {;}
@@ -113,7 +113,7 @@ cases:
 
 case_break:
 	// CAN BE EMPTY
-	| BREAK ';' { printf("JMP label%d\n",nesting_arr[nesting_last_index]); }
+	| BREAK ';' {;}
 			
 default:
 	DEFAULT ':' statement {;}
@@ -166,7 +166,7 @@ condition:
 	  '(' condition ')' 				{;}
 	| condition OR high_p_condition 	{ cond_lowp("OR");     }
 	| condition AND high_p_condition 	{ cond_lowp("AND");    }
-	| NOT condition 					{ printf("NOT R10\n"); }
+	| NOT condition 					{;}
 	| high_p_condition 					{;}
 	;
 
@@ -181,14 +181,14 @@ high_p_condition:
 
 
 math_expr:
-	'('math_expr')'							{ $$=$2; }
+	'('math_expr')'							{ $$ = $2; }
 	| math_expr '+' high_priority_expr    	{ calc_lowp("ADD"); }
 	| math_expr '-' high_priority_expr    	{ calc_lowp("SUB"); }
-	| '~' math_expr							{ $$ = ~$2; after_hp ? printf("NOT R4\n") : printf("NOT R%d\n",next_reg-1); }
+	| '~' math_expr							{ $$ = ~$2; }
 	| math_expr '|' high_priority_expr		{ calc_lowp("OR"); }
 	| math_expr '&' high_priority_expr		{ calc_lowp("AND"); }
 	| math_expr '^' high_priority_expr		{ calc_lowp("XOR"); }
-	| high_priority_expr					{ $$=$1; }
+	| high_priority_expr					{ $$ = $1; }
 	;
 
 high_priority_expr:
@@ -198,8 +198,8 @@ high_priority_expr:
 	;
 
 math_element:
-	  NUM			  			{ $$=$1; printf("NUM"); next_reg++;}
-	| FLOATING_NUM				{ $$=$1; printf("FLOATING_NUM"); next_reg++; }
+	  NUM			  			{ $$=$1; next_reg++;}
+	| FLOATING_NUM				{ $$=$1; next_reg++; }
 	| ID 	{	$$=$1;
 				if(declared[$1] == 1) {
 					if(variable_initialized[$1] == 1) {
@@ -258,8 +258,6 @@ constant_declaration_statement:
 														scope[$3] = cscope;
 														is_constant[$3] = 1;
 														variable_initialized[$3] = 1;
-														printf("MOV %c,'%c'\n",$3+'a',$5+'a');
-
 													} else {
 														printf("Syntax Error : %c is an already declared variable\n", $3 + 'a');
 													}
