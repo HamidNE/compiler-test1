@@ -101,7 +101,7 @@ switch_body:
 	| open_brace cases default  { int tmp = exit_scope(); printf("label%d%c:\nlabel%d:\n",tmp,'a'-1+next_case,tmp); } close_brace
 
 cases:
-	  CASE { next_case > 0 ? printf("label%d%c:\n",nesting_arr[nesting_last_index],'a'-1+next_case) : null; next_case++; } math_expr { switch_test(); } ':' statement case_break {;}
+	  CASE { if (next_case > 0) printf("label%d%c:\n",nesting_arr[nesting_last_index],'a'-1+next_case); next_case++; } math_expr { switch_test(); } ':' statement case_break {;}
 	| cases cases {;}
 	;
 
