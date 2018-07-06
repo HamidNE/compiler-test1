@@ -107,7 +107,7 @@ switch_body:
 	| open_brace cases default  { int tmp = exit_scope(); } close_brace
 
 cases:
-	  CASE { if (next_case > 0) printf("label%d%c:\n",nesting_arr[nesting_last_index],'a'-1+next_case); next_case++; } math_expr { switch_test(); } ':' statement case_break {;}
+	  CASE {  next_case++; } math_expr { switch_test(); } ':' statement case_break {;}//if (next_case > 0) printf("label%d%c:\n",nesting_arr[nesting_last_index],'a'-1+next_case);
 	| cases cases {;}
 	;
 
@@ -125,7 +125,7 @@ for_loop:
 	FOR '(' assign_statement for_sep1 condition for_sep2 assign_statement ')' for_ob statement for_cb {;}
 
 for_sep1:
-	';' { printf("MOV RF,0\n"); printf("label%d:\n",new_scope()); reset(); }
+	';' {  printf("label%d:\n",new_scope()); reset(); }//printf("MOV RF,0\n");
 
 for_sep2:
 	';' { printf("JF R10, label%da\n",nesting_arr[nesting_last_index]); printf("CMPE RF,0\n"); printf("JT R10, label%db\n", nesting_arr[nesting_last_index]); }
@@ -156,7 +156,7 @@ ELSE_FINAL:
 	ELSE '{' { printf("JT R10, label%d\n",new_scope()); open_brace(); reset(); }
 
 if_open_brace:
-	'{' { printf("JF R10, label%d\n",new_scope()); open_brace(); reset(); }
+	'{' {  open_brace(); reset(); }//printf("JF R10, label%d\n",new_scope());
 
 if_closed_brace:
 	'}'	{ printf("label%d:\n",exit_scope()); close_brace(); }
@@ -341,7 +341,6 @@ void cond_highp (char * op) {
 		printf("%s R14,R%d,R%d\n", op, --next_reg, --next_reg );
 	}
 }
-
 void switch_test () {
 
 	if(is_first)
@@ -349,7 +348,7 @@ void switch_test () {
 
 	next_reg--;
 
-	printf("JF R10,label%d%c\n",nesting_arr[nesting_last_index],'a'-1+next_case);
+	
 	reset();
 }
 
