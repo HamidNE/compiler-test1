@@ -205,12 +205,12 @@ math_element:
 					if(variable_initialized[$1] == 1) {
 						$$=$1;
 						next_reg++;
-					} else {
-						printf("Error: %c is not set\n", $1+'a');
 					}
-				} else {
-					printf("Error: %c is not declared\n", $1+'a');
+					else
+						printf("Error: %c is not set\n", $1+'a');
 				}
+				else
+					printf("Error: %c is not declared\n", $1+'a');
 			}
 	| '('math_expr')'			{ $$=$2; }
 	;
@@ -231,10 +231,9 @@ variable_declaration_statement:
 											scope[$2] = cscope;
 											is_constant[$2] = 0;
 											variable_initialized[$2] = 1;
-											printf("MOV %c,'%c'\n",$2+'a',$4+'a');
-										} else {
-											printf("Syntax Error : %c is an already declared variable\n", $2 + 'a');
 										}
+										else 
+											printf("Syntax Error : %c is an already declared variable\n", $2 + 'a');
 									}
 	| TYPE_CHR ID '=' FLOATING_NUM { printf("Syntax Error : char can not be assigned a floating number\n");}
 	;
@@ -258,9 +257,8 @@ constant_declaration_statement:
 														scope[$3] = cscope;
 														is_constant[$3] = 1;
 														variable_initialized[$3] = 1;
-													} else {
+													} else
 														printf("Syntax Error : %c is an already declared variable\n", $3 + 'a');
-													}
 												}
 	;
 
@@ -378,20 +376,14 @@ void assign_only(int id) {
 	if(declared[id] == 1) {
 		if (is_constant[id] == 0) {
 			variable_initialized[id] = 1;
-			if(is_first) {
-				printf("MOV %c,R%d\n",id+'a',--next_reg);
-				}else{
-					if(after_hp)
-						printf("MOV %c,R4\n",id+'a');
-					else
-						printf("MOV %c,R0\n",id+'a');
-				}
-			} else {
-				printf("Syntax Error : %c is a constant\n", id + 'a');
-			}
-	} else {
-		printf("Syntax Error : %c is not declared\n", id + 'a');
+			if(is_first)
+				next_reg--;
+		}
+		else 
+			printf("Syntax Error : %c is a constant\n", id + 'a');
 	}
+	else
+		printf("Syntax Error : %c is not declared\n", id + 'a');
 }
 
 void switch_expr() {
