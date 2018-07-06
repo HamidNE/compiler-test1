@@ -230,16 +230,7 @@ variable_declaration_statement:
 	| TYPE_CHR ID					{ declare_only($2,3); }
 	| TYPE_INT ID '=' math_expr		{ declare_initalize($2,1); }
 	| TYPE_DBL ID '=' math_expr		{ declare_initalize($2,2); }
-	| TYPE_CHR ID '=' CHAR_VALUE	{ 	if(declared[$2] == 0) {
-											declared[$2] = 1;
-											type[$2] = 3;
-											scope[$2] = cscope;
-											is_constant[$2] = 0;
-											variable_initialized[$2] = 1;
-										}
-										else 
-											printf("Syntax Error : %c is an already declared variable\n", $2 + 'a');
-									}
+	| TYPE_CHR ID '=' CHAR_VALUE	{ declare_initalize($2,3); }
 	| TYPE_CHR ID '=' DOUBLE_NUM { printf("Syntax Error : char can not be assigned a floating number\n");}
 	;
 
