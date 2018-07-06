@@ -43,7 +43,13 @@ int variable_initialized[26];
 int type[26];
 %}
 // definitions
-%union {int INTGR; char * STRNG; float FLT; char CHR;}
+%union {
+	int 	INTGR;
+	char 	CHR;
+	char 	*STRNG;
+	double 	FLT;
+}
+
 %start statement
 %token IF ELSE ELSEIF FOR WHILE SWITCH CASE DO BREAK DEFAULT
 %token TYPE_INT TYPE_FLT TYPE_STR TYPE_CHR TYPE_CONST show_symbol_table
@@ -193,14 +199,13 @@ high_priority_expr:
 
 //TODO: ID type check
 math_element:
-	  NUM			  			{ $$=$1; printf("MOV R%d, %d\n",next_reg++ ,$1);}
-	| FLOATING_NUM				{ $$=$1; printf("MOV R%d, %f\n",next_reg++,$1); }
+	  NUM			  			{ $$=$1; printf("NUM"); next_reg++;}
+	| FLOATING_NUM				{ $$=$1; printf("FLOATING_NUM"); next_reg++; }
 	| ID 	{	$$=$1;
 				if(declared[$1] == 1) {
 					if(variable_initialized[$1] == 1) {
 						$$=$1;
-						printf("OK");
-						printf("MOV R%d, %c\n",next_reg++,$1+'a');
+						next_reg++;
 					} else {
 						printf("Error: %c is not set\n", $1+'a');
 					}
