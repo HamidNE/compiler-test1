@@ -227,7 +227,7 @@ assign_statement:
 variable_declaration_statement:
 	  TYPE_INT int_id_list
 	| TYPE_DBL double_id_list
-	| TYPE_CHR ID					{ declare_only($2,3); }
+	| TYPE_CHR char_id_list
 	| TYPE_INT ID '=' math_expr		{ declare_initalize($2,1); }
 	| TYPE_DBL ID '=' math_expr		{ declare_initalize($2,2); }
 	| TYPE_CHR ID '=' CHAR_VALUE	{ declare_initalize($2,3); }
@@ -242,6 +242,11 @@ int_id_list:
 double_id_list:
 	  ID ',' double_id_list	{ declare_only($1,2); }
 	| ID					{ declare_only($1,2); }
+	;
+
+char_id_list:
+	  ID ',' char_id_list	{ declare_only($1,3); }
+	| ID					{ declare_only($1,3); }
 	;
 
 open_brace:
