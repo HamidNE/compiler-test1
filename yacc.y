@@ -122,7 +122,7 @@ do_while:
 	DO '{' {  open_brace(); } statement '}' {close_brace();} WHILE '('condition')' { }//printf("label:%d\n",new_scope());//printf("JT R10,label%d\n",exit_scope());
 
 for_loop:
-	FOR '(' assign_statement for_sep1 condition for_sep2 assign_statement ')' for_ob statement for_cb {;}
+	FOR '(' assign_statement for_sep1 condition for_sep2 assign_statement ')' for_ob statement for_cb {;}//nothing
 
 for_sep1:
 	';' {   reset(); }//printf("MOV RF,0\n");printf("label%d:\n",new_scope());
