@@ -65,99 +65,102 @@ int type[26];
 // Production rules
 %%
 
-statement	: variable_declaration_statement ';' 				{reset();}
-			| assign_statement ';' 								{reset();}
-			| constant_declaration_statement ';' 				{reset();}
-			| conditional_statement 							{reset();}
-			| math_expr ';' 									{reset();}
-			| exit_command ';' 									{exit(EXIT_SUCCESS);}
-			| show_symbol_table ';' 							{print_symbol_table();}
-			| statement variable_declaration_statement ';' 		{reset();}
-			| statement assign_statement ';' 					{reset();}
-			| statement constant_declaration_statement ';' 		{reset();}
-			| statement conditional_statement 					{reset();}
-			| statement math_expr ';' 							{reset();}
-			| statement exit_command ';' 						{exit(EXIT_SUCCESS);}
-			| open_brace statement close_brace statement 		{;}
-			| statement open_brace statement close_brace 		{;}
-			| statement show_symbol_table ';' 					{print_symbol_table();}
-			;
+statement:
+	  variable_declaration_statement ';' 				{reset();}
+	| assign_statement ';' 								{reset();}
+	| constant_declaration_statement ';' 				{reset();}
+	| conditional_statement 							{reset();}
+	| math_expr ';' 									{reset();}
+	| exit_command ';' 									{exit(EXIT_SUCCESS);}
+	| show_symbol_table ';' 							{print_symbol_table();}
+	| statement variable_declaration_statement ';' 		{reset();}
+	| statement assign_statement ';' 					{reset();}
+	| statement constant_declaration_statement ';' 		{reset();}
+	| statement conditional_statement 					{reset();}
+	| statement math_expr ';' 							{reset();}
+	| statement exit_command ';' 						{exit(EXIT_SUCCESS);}
+	| open_brace statement close_brace statement 		{;}
+	| statement open_brace statement close_brace 		{;}
+	| statement show_symbol_table ';' 					{print_symbol_table();}
+	;
 
-conditional_statement :
-			  if_statement 		{;}
-			| while_loop 		{;}
-			| for_loop 			{;}
-			| do_while 			{;}
-			| switch_statement	{;}
-			;
+conditional_statement:
+	  if_statement 		{;}
+	| while_loop 		{;}
+	| for_loop 			{;}
+	| do_while 			{;}
+	| switch_statement	{;}
+	;
 
 switch_statement:
-			SWITCH '(' math_expr ')' { switch_expr(); new_scope(); } switch_body
-			;
+	SWITCH '(' math_expr ')' { switch_expr(); new_scope(); } switch_body
+	;
 
 switch_body:
-			  open_brace cases {
-				int tmp = exit_scope();
-				printf("label%d%c:\nlabel%d:\n",tmp,'a'-1+next_case,tmp);
-			} close_brace
-			| open_brace cases default {
-				int tmp = exit_scope();
-				printf("label%d%c:\nlabel%d:\n",tmp,'a'-1+next_case,tmp);
-			} close_brace
+	  open_brace cases 			{ int tmp = exit_scope(); printf("label%d%c:\nlabel%d:\n",tmp,'a'-1+next_case,tmp); } close_brace
+	| open_brace cases default  { int tmp = exit_scope(); printf("label%d%c:\nlabel%d:\n",tmp,'a'-1+next_case,tmp); } close_brace
 
-
-cases: CASE {if(next_case>0)
+cases:
+	CASE { if(next_case>0)
 								{printf("label%d%c:\n",nesting_arr[nesting_last_index],'a'-1+next_case);}
 							next_case++;}
 							math_expr  {switch_test();}':' statement case_break{;}
 			|cases cases {;}
 			;
 
-case_break: // CAN BE EMPTY
-			| BREAK ';' {printf("JMP label%d\n",nesting_arr[nesting_last_index]);}
+case_break:
+	// CAN BE EMPTY
+	| BREAK ';' { printf("JMP label%d\n",nesting_arr[nesting_last_index]); }
 			
 default: DEFAULT ':' statement {;}
 
-do_while: DO '{' {printf("label:%d\n",new_scope()); open_brace();} statement '}' {close_brace();} WHILE '('condition')' {printf("JT R10,label%d\n",exit_scope());}
+do_while:
+	DO '{' { printf("label:%d\n",new_scope()); open_brace(); } statement '}' {close_brace();} WHILE '('condition')' {printf("JT R10,label%d\n",exit_scope()); }
+
 for_loop:
-			FOR '(' assign_statement for_sep1 condition for_sep2 assign_statement ')'for_ob statement for_cb {;}
-for_sep1 : ';' {printf("MOV RF,0\n");
-								printf("label%d:\n",new_scope());reset();}
-for_sep2 : ';' {printf("JF R10, label%da\n",nesting_arr[nesting_last_index]);
-								printf("CMPE RF,0\n");
-								printf("JT R10, label%db\n", nesting_arr[nesting_last_index]);}
-for_ob : '{' {printf("label%db:\n",nesting_arr[nesting_last_index]);
-							printf("MOV RF,1\n");
-							open_brace();
-							reset();}
-for_cb : '}' {printf("JMP label%d\n",nesting_arr[nesting_last_index]);
-							printf("label%da:\n",exit_scope());
-							close_brace();
-						}
+	FOR '(' assign_statement for_sep1 condition for_sep2 assign_statement ')' for_ob statement for_cb {;}
 
-while_loop :
-			WHILE {printf("label%d:\n",new_scope());} '(' condition ')' while_open_brace statement while_closed_brace {;}
-			;
-while_open_brace : '{' {printf("JF R10, label%da\n",nesting_arr[nesting_last_index]);reset();open_brace();}
-while_closed_brace : '}' {printf("JMP label%d\n",nesting_arr[nesting_last_index]);
-													printf("label%da:\n",exit_scope());reset();close_brace();}
-if_statement :
-			IF '(' condition ')'if_open_brace statement if_closed_brace {;}
-			| IF '(' condition ')'if_open_brace statement if_closed_brace ELSE_FINAL statement if_closed_brace {;}
-			| IF '(' condition ')'if_open_brace statement if_closed_brace ELSE if_statement {;}
-			;
-ELSE_FINAL : ELSE '{' {printf("JT R10, label%d\n",new_scope());open_brace();reset();}
-if_open_brace : '{' {printf("JF R10, label%d\n",new_scope());open_brace();reset();}
-if_closed_brace : '}' {printf("label%d:\n",exit_scope());close_brace();}
-;
+for_sep1:
+	';' { printf("MOV RF,0\n"); printf("label%d:\n",new_scope()); reset(); }
 
-condition :
-			'(' condition ')' {;}
-			| condition OR high_p_condition {cond_lowp("OR");}
-			| condition AND high_p_condition {cond_lowp("AND");}
-			| NOT condition {printf("NOT R10\n");}
-			| high_p_condition {;}
-			;
+for_sep2:
+	';' { printf("JF R10, label%da\n",nesting_arr[nesting_last_index]); printf("CMPE RF,0\n"); printf("JT R10, label%db\n", nesting_arr[nesting_last_index]); }
+
+for_ob:
+	'{' { printf("label%db:\n",nesting_arr[nesting_last_index]); printf("MOV RF,1\n"); open_brace(); reset(); }
+
+for_cb:
+	'}' { printf("JMP label%d\n",nesting_arr[nesting_last_index]); printf("label%da:\n",exit_scope()); close_brace(); }
+
+while_loop:
+	WHILE { printf("label%d:\n",new_scope()); } '(' condition ')' while_open_brace statement while_closed_brace {;}
+	;
+
+while_open_brace:
+	'{' { printf("JF R10, label%da\n",nesting_arr[nesting_last_index]); reset(); open_brace(); }
+
+while_closed_brace:
+	'}' { printf("JMP label%d\n",nesting_arr[nesting_last_index]); printf("label%da:\n",exit_scope()); reset(); close_brace(); }
+
+if_statement:
+	  IF '(' condition ')'if_open_brace statement if_closed_brace 										{;}
+	| IF '(' condition ')'if_open_brace statement if_closed_brace ELSE_FINAL statement if_closed_brace 	{;}
+	| IF '(' condition ')'if_open_brace statement if_closed_brace ELSE if_statement 					{;}
+	;
+
+ELSE_FINAL:
+	ELSE '{'				{ printf("JT R10, label%d\n",new_scope()); open_brace(); reset(); }
+	if_open_brace : '{'		{ printf("JF R10, label%d\n",new_scope()); open_brace(); reset(); }
+	if_closed_brace : '}'	{ printf("label%d:\n",exit_scope()); close_brace(); }
+	;
+
+condition:
+	  '(' condition ')' 				{;}
+	| condition OR high_p_condition 	{ cond_lowp("OR");     }
+	| condition AND high_p_condition 	{ cond_lowp("AND");    }
+	| NOT condition 					{ printf("NOT R10\n"); }
+	| high_p_condition 					{;}
+	;
 
 high_p_condition :
 			  math_expr EQ math_expr 		{ cond_highp("CMPE");  }
