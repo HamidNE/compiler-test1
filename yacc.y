@@ -137,6 +137,101 @@ SList:
 	| Stmt ';' Slist
 	;
 
+Stmt:
+	| Exp 
+	| VarDecs 
+	| for lvalue '=' Exp '(' to | down to ')' Exp do Block
+	| while Exp do Block
+	| if Exp then Block 
+	| if Exp then Block else Block 
+	| switch Exp of '{' Cases '}' 
+	| break 
+	| repeat Block until Exp 
+	| continue 
+	| return Exp 
+	| write ExpPlus 
+	| read '(' lvalue ')'
+	;
+
+Range:
+	Exp '..' Exp
+	;
+
+Cases:
+	  Case
+	| Case Cases '.' end
+	;
+
+Case:
+	  case Exp ':' Block
+	| case Range ':' Block
+	;
+
+Logic:
+	  '&&'
+	| '||'
+	| '<'
+	| '>'
+	| '>='
+	| '<='
+	| '=='
+	| '!='
+	;
+
+Aop:
+	  '+'
+	| '-'
+	| '*'
+	| '/'
+	| '%'
+	;
+
+ExpList:
+	| ExpPlus
+	;
+
+ExpPlus:
+	  Ex
+	| Exp ',' ExpPlus
+	;
+
+IDD:
+	  ID
+	| IDD '[' Exp ']'
+	;
+
+lvalue:
+	  ID
+	| IDD
+	;
+
+Exp:
+	  IntNumber
+	| lvalue	
+	| RealNumber
+	| CHAR
+	| true
+	| false
+	| Exp Aop Exp
+	| Exp Logic Exp
+	| '-' Exp
+	| STRING
+	| '(' Exp ')'
+	| Exp in Range
+	| lvalue '=' Exp
+	| ID '(' ExpList ')'
+	;
+
+Block:
+	  '{' Slist '}'
+	| Stmt
+	;
+
+
+
+
+
+
 
 
 
