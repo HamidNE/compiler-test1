@@ -110,6 +110,7 @@ switch_statement:
 switch_body:
 	  open_brace cases 			{ int tmp = exit_scope(); } close_brace
 	| open_brace cases default  { int tmp = exit_scope(); } close_brace
+	;
 
 cases:
 	  CASE {  next_case++; } math_expr { switch_test(); } ':' statement case_break {;}//if (next_case > 0) printf("label%d%c:\n",nesting_arr[nesting_last_index],'a'-1+next_case);
@@ -117,39 +118,46 @@ cases:
 	;
 
 case_break:
-	// CAN BE EMPTY
 	| BREAK ';' {;}
+	;
 			
 default:
 	DEFAULT ':' statement {;}
+	;
 
 do_while:
-	DO '{' { printf("label:%d\n",new_scope()); open_brace(); } statement '}' {close_brace();} WHILE '('condition')' {printf("JT R10,label%d\n",exit_scope()); }
+	DO '{' { new_scope(); open_brace(); } statement '}' { close_brace(); } WHILE '('condition')' { exit_scope(); }
+	;
 
 for_loop:
 	FOR '(' assign_statement for_sep1 condition for_sep2 assign_statement ')' for_ob statement for_cb {;}
+	;
 
 for_sep1:
-	';' {  printf("label%d:\n",new_scope()); reset(); }//printf("MOV RF,0\n");
+	';' { new_scope(); reset(); }//printf("MOV RF,0\n");
 
 for_sep2:
-	';' { printf("JF R10, label%da\n",nesting_arr[nesting_last_index]); printf("CMPE RF,0\n"); printf("JT R10, label%db\n", nesting_arr[nesting_last_index]); }
+	';' {;}
 
 for_ob:
-	'{' { printf("label%db:\n",nesting_arr[nesting_last_index]); printf("MOV RF,1\n"); open_brace(); reset(); }
+	'{' { open_brace(); reset(); }
+	;
 
 for_cb:
-	'}' { printf("JMP label%d\n",nesting_arr[nesting_last_index]); printf("label%da:\n",exit_scope()); close_brace(); }
+	'}' { exit_scope(); close_brace(); }
+	;
 
 while_loop:
-	WHILE { printf("label%d:\n",new_scope()); } '(' condition ')' while_open_brace statement while_closed_brace {;}
+	WHILE { new_scope(); } '(' condition ')' while_open_brace statement while_closed_brace {;}
 	;
 
 while_open_brace:
-	'{' { printf("JF R10, label%da\n",nesting_arr[nesting_last_index]); reset(); open_brace(); }
+	'{' { reset(); open_brace(); }
+	;
 
 while_closed_brace:
-	'}' { printf("JMP label%d\n",nesting_arr[nesting_last_index]); printf("label%da:\n",exit_scope()); reset(); close_brace(); }
+	'}' { exit_scope(); reset(); close_brace(); }
+	;
 
 if_statement:
 	  IF '(' condition ')'if_open_brace statement if_closed_brace 										{;}
@@ -159,9 +167,11 @@ if_statement:
 
 ELSE_FINAL:
 	ELSE '{' { printf("JT R10, label%d\n",new_scope()); open_brace(); reset(); }
+	;
 
 if_open_brace:
-	'{' {  open_brace(); reset(); }//printf("JF R10, label%d\n",new_scope());
+	'{' {  open_brace(); reset(); }//printf("JF R10, label%d\n",new_scope())
+	;
 
 if_closed_brace:
 	'}'	{ printf("label%d:\n",exit_scope()); close_brace(); }
@@ -223,6 +233,7 @@ math_element:
 assign_statement:
 //TODO assign statement for char !
 	ID '=' math_expr	{ assign_only($1); }
+	;
 
 variable_declaration_statement:
 	  TYPE_INT int_id_list
