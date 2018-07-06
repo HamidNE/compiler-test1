@@ -51,7 +51,7 @@ int type[26];
 }
 
 %start statement
-%token IF ELSE ELSEIF FOR WHILE SWITCH CASE DO BREAK DEFAULT
+%token IF ELSE ELSEIF FOR WHILE SWITCH CASE DO BREAK DEFAULT PROGRAM
 %token TYPE_INT TYPE_DBL TYPE_STR TYPE_CHR TYPE_CONST show_symbol_table
 %token <INTGR> ID
 %token <INTGR> NUM
@@ -76,6 +76,7 @@ statement:
 	| assign_statement ';' 								{reset();}
 	| constant_declaration_statement ';' 				{reset();}
 	| conditional_statement 							{reset();}
+	| define_program ';' 								{;}
 	| math_expr ';' 									{reset();}
 	| exit_command ';' 									{exit(EXIT_SUCCESS);}
 	| show_symbol_table ';' 							{print_symbol_table();}
@@ -88,6 +89,10 @@ statement:
 	| open_brace statement close_brace statement 		{;}
 	| statement open_brace statement close_brace 		{;}
 	| statement show_symbol_table ';' 					{print_symbol_table();}
+	;
+
+define_program:
+	PROGRAM ID {;}
 	;
 
 conditional_statement:
