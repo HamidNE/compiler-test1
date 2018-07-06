@@ -1,16 +1,2 @@
-
-Syntax Error : x is an already declared variable
-
-CMPE R10,R1,R2
-JF R10, label1
-
-CMPNE R10,R1,R2
-JF R10, label2
-
-
-label2:
-
-
-label1:
-
+varible declaration
 

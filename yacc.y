@@ -72,7 +72,7 @@ int type[26];
 %%
 
 statement:
-	  variable_declaration_statement ';' 				{reset();}
+	  variable_declaration_statement ';' 				{printf("varible declaration\n");reset();}
 	| assign_statement ';' 								{reset();}
 	| constant_declaration_statement ';' 				{reset();}
 	| conditional_statement 							{reset();}
@@ -122,7 +122,7 @@ do_while:
 	DO '{' {  open_brace(); } statement '}' {close_brace();} WHILE '('condition')' { }//printf("label:%d\n",new_scope());//printf("JT R10,label%d\n",exit_scope());
 
 for_loop:
-	FOR assign_statement '('TO')' CHAR_VALUE DO for_ob statement for_cb {;}{ printf("For loop first\n");}
+	FOR assign_statement '('TO')' math_expr DO for_ob statement for_cb {;}{ printf("For loop first\n");}
 	//FOR '(' assign_statement for_sep1 condition for_sep2 assign_statement ')' for_ob statement for_cb {;}
 	//for_t lvalue '=' Exp '('valfor')' Exp do_t Block
 
@@ -220,11 +220,14 @@ math_element:
 assign_statement:
 //TODO assign statement for char !
 	ID '=' math_expr	{ assign_only($1); }
-
+;
 variable_declaration_statement:
 	  TYPE_INT ID 					{ declare_only($2,1); }
 	| TYPE_DBL ID					{ declare_only($2,2); }
 	| TYPE_CHR ID					{ declare_only($2,3); }
+	| TYPE_INT ID '['math_expr']'			{ printf("array\n"); }
+	| TYPE_DBL ID '['math_expr']'			{ printf("array\n"); }
+	| TYPE_CHR ID '['math_expr']'			{ printf("array\n"); }
 	| TYPE_INT ID '=' math_expr		{ declare_initalize($2,1); }
 	| TYPE_DBL ID '=' math_expr		{ declare_initalize($2,2); }
 	| TYPE_CHR ID '=' CHAR_VALUE	{ 	if(declared[$2] == 0) {
