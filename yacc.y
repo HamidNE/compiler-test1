@@ -231,7 +231,7 @@ variable_declaration_statement:
 	| TYPE_INT ID '=' math_expr		{ declare_initalize($2,1); }
 	| TYPE_DBL ID '=' math_expr		{ declare_initalize($2,2); }
 	| TYPE_CHR ID '=' CHAR_VALUE	{ declare_initalize($2,3); }
-	| TYPE_CHR ID '=' DOUBLE_NUM { printf("Syntax Error : char can not be assigned a floating number\n");}
+	| TYPE_CHR ID '=' DOUBLE_NUM 	{ printf("Syntax Error : char can not be assigned a doubling number\n");}
 	;
 
 open_brace:
@@ -246,16 +246,7 @@ close_brace:
 constant_declaration_statement:
 	  TYPE_CONST TYPE_INT ID '=' math_expr		{ declare_const($3,1); }
 	| TYPE_CONST TYPE_DBL ID '=' math_expr		{ declare_const($3,2); }
-	| TYPE_CONST TYPE_CHR ID '=' CHAR_VALUE		{
-													if(declared[$3] == 0) {
-														declared[$3] = 1;
-														type[$3] = 3;
-														scope[$3] = cscope;
-														is_constant[$3] = 1;
-														variable_initialized[$3] = 1;
-													} else
-														printf("Syntax Error : %c is an already declared variable\n", $3 + 'a');
-												}
+	| TYPE_CONST TYPE_CHR ID '=' CHAR_VALUE		{ declare_const($3,3); }
 	;
 
 
@@ -388,7 +379,7 @@ void declare_const(int id, int _type)
 		variable_initialized[id] = 1;
 		is_constant[id] = 1;
 
-		if(is_first)
+		if(is_first && _type != 3)
 			next_reg--;
 	} else {
 		printf("Syntax Error : %c is an already declared variable\n", id + 'a');
@@ -402,7 +393,7 @@ void declare_initalize(int id, int _type) {
 		scope[id] = cscope;
 		variable_initialized[id] = 1;
 		is_constant[id] = 0;
-		if(is_first)
+		if(is_first && _type != 3)
 			next_reg--;
 	} else {
 		printf("Syntax Error : %c is an already declared variable\n", id + 'a');
