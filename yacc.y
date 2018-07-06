@@ -51,7 +51,7 @@ int type[26];
 }
 
 %start statement
-%token IF ELSE ELSEIF FOR WHILE SWITCH CASE DO BREAK DEFAULT
+%token IF ELSE ELSEIF FOR WHILE SWITCH CASE DO BREAK DEFAULT TO
 %token TYPE_INT TYPE_DBL TYPE_STR TYPE_CHR TYPE_CONST show_symbol_table
 %token <INTGR> ID
 %token <INTGR> NUM
@@ -122,19 +122,21 @@ do_while:
 	DO '{' {  open_brace(); } statement '}' {close_brace();} WHILE '('condition')' { }//printf("label:%d\n",new_scope());//printf("JT R10,label%d\n",exit_scope());
 
 for_loop:
-	FOR '(' assign_statement for_sep1 condition for_sep2 assign_statement ')' for_ob statement for_cb {;}//nothing
+	FOR assign_statement '('TO')' CHAR_VALUE DO for_ob statement for_cb {;}{ printf("For loop first\n");}
+	//FOR '(' assign_statement for_sep1 condition for_sep2 assign_statement ')' for_ob statement for_cb {;}
+	//for_t lvalue '=' Exp '('valfor')' Exp do_t Block
 
 for_sep1:
-	';' {   reset(); }//printf("MOV RF,0\n");printf("label%d:\n",new_scope());
+	';' { printf("For loop\n");  reset(); }//printf("MOV RF,0\n");printf("label%d:\n",new_scope());
 
 for_sep2:
-	';' { }// printf("JF R10, label%da\n",nesting_arr[nesting_last_index]); printf("CMPE RF,0\n"); printf("JT R10, label%db\n", nesting_arr[nesting_last_index]);
+	';' {printf("For loop\n"); }// printf("JF R10, label%da\n",nesting_arr[nesting_last_index]); printf("CMPE RF,0\n"); printf("JT R10, label%db\n", nesting_arr[nesting_last_index]);
 
 for_ob:
-	'{' {  open_brace(); reset(); }//printf("label%db:\n",nesting_arr[nesting_last_index]); printf("MOV RF,1\n");
+	'{' {printf("open brace\n");  open_brace(); reset(); }//printf("label%db:\n",nesting_arr[nesting_last_index]); printf("MOV RF,1\n");
 
 for_cb:
-	'}' {  close_brace(); }//printf("JMP label%d\n",nesting_arr[nesting_last_index]); printf("label%da:\n",exit_scope());
+	'}' {printf("close brace\n");  close_brace(); }//printf("JMP label%d\n",nesting_arr[nesting_last_index]); printf("label%da:\n",exit_scope());
 
 while_loop:
 	WHILE  '(' condition ')' while_open_brace statement while_closed_brace {;}//{ printf("label%d:\n",new_scope()); }
