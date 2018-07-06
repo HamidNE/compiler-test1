@@ -2,7 +2,8 @@
 ## Math Expressions
 ```c
 int v = 7 + 4 + 2 + 5 + 2 * 2;
-
+```
+```
 MOV R1, 7   
 MOV R2, 4  
 ADD R0,R2,R1  
@@ -19,7 +20,8 @@ MOV v,R0
 
 ```c
 float g = 3;
-
+```
+```
 MOV R1, 3  
 MOV g,R1  
 ```
@@ -39,7 +41,8 @@ if ( 3 == 4 + 1  || 2 == 2 || -1 == 6) {
 int x = 2 ;
 }
 int y = 2;
-
+```
+```
 MOV R1, 3
 MOV R2, 4
 MOV R3, 1
@@ -71,7 +74,8 @@ if ( ! x == 3 ){
 int z = 1;
 }
 int w;
-
+```
+```
 MOV R1, 1
 MOV x,R1
 
@@ -116,7 +120,8 @@ if (x == 0) {
 if ( x > 20) {
 int y = 1;
 }
-
+```
+```
 MOV R1, 0
 MOV x,R1
 
@@ -183,7 +188,8 @@ int x = 1;
 while( x == 1 &&  x <= 1 || x == 20 ) {
   x = 67;
 }
-
+```
+```
 MOV R1, 1
 MOV x,R1
 
@@ -214,7 +220,8 @@ int x = 50;
 do {
   x = x + 1;
 } while ( x <= 100 )
-
+```
+```
 MOV R1, 50
 MOV x,R1
 
@@ -236,7 +243,8 @@ int i;
 for ( i = 0; i < 10; i = i + 1 ) {
   int x = 1;
 }
-
+```
+```
 MOV R1, 0
 MOV i,R1
 MOV RF,0
@@ -271,7 +279,8 @@ for ( i = 0; i < 10; i = i + 1 ) {
     x = 15;
   }
 }
-
+```
+```
 MOV R1, 0
 MOV i,R1
 MOV RF,0
@@ -327,8 +336,8 @@ int x = 1 ;
 do{
 x = x + 1;
 } while(x < 10)
-
-
+```
+```
 label:3
 MOV R1, x
 MOV R2, 1
@@ -355,7 +364,8 @@ switch(x){
   case 5 : x = x + 2;
   case 8 : x = 1; break;
 }
-
+```
+```
 MOV R1, 3
 MOV x,R1
 
@@ -392,7 +402,8 @@ switch(x){
   case 8 : x = 1;
 	default: int z = 1;
 }
-
+```
+```
 MOV R1, 10
 MOV x,R1
 
@@ -438,7 +449,8 @@ float z;
 if(x ==8){
 	float m;
 	symbol_table
-
+```
+```
 MOV R1, 3
 MOV x,R1
 MOV y,'l'
