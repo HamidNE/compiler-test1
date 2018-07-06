@@ -344,16 +344,10 @@ void cond_highp (char * op) {
 
 void switch_test () {
 
-	if(is_first) {
-		printf("CMPE R10,RS,R%d\n", --next_reg );
+	if(is_first)
 		is_first=0;
-	} else {
-		if(after_hp) {
-			printf("CMPE R10,RS,R4\n", --next_reg);
-		} else {
-			printf("CMPE R10,RS,R0\n", --next_reg);
-		}
-	}
+
+	next_reg--;
 
 	printf("JF R10,label%d%c\n",nesting_arr[nesting_last_index],'a'-1+next_case);
 	reset();
