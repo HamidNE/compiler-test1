@@ -71,6 +71,75 @@ int type[26];
 // Production rules
 %%
 
+Program:
+	program ID ';' DecList '{' '}' '.' ;
+
+DecList:
+	| Dec DecList
+	;
+
+Dec:
+	  VarDecs
+	| FuncDecs
+	;
+
+FuncDecs:
+	| FuncDec FuncDecs
+	;
+
+VarDecs:
+	  VarDec
+	| VarDec VarDecs
+	;
+
+VarDec:
+	Type IDDList ';' ;
+
+Type:
+	  int
+	| double
+	| bool
+	| char
+	;
+
+IDDim:
+	  ID
+	| IDDim
+	| '[' IntNumber ']'
+	;
+
+IDDList:
+	  IDDim
+	| IDDim ',' IDDList
+	;
+
+IDList:
+	  ID
+	| ID ',' IDList
+	;
+
+FuncDec:
+	Type ID '(' ArgsList ')' '{' SList '}' ';' ;
+
+ArgsList:
+	| ArgList
+	;
+
+ArgList:
+	  Arg
+	| Arg ';' ArgList
+	;
+
+Arg:
+	Type IDList ;
+
+SList:
+	| Stmt ';' Slist
+	;
+
+
+
+
 statement:
 	  variable_declaration_statement ';' 				{reset();}
 	| assign_statement ';' 								{reset();}
